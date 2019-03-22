@@ -6,7 +6,6 @@ var bcrypt = require('bcrypt');
 router.post('/signin', function (req, res, next) {
 
     const errors = [];
-
     const {username, password} = req.body;
 
     if (!username) {
@@ -18,7 +17,7 @@ router.post('/signin', function (req, res, next) {
     }
 
     if (errors.length > 0) {
-        res.render('index', {errors: errors});
+        res.render('index', {errors: errors, username: username});
     } else {
         var query = Usuario.findOne();
         query.where('username', username);
@@ -27,15 +26,15 @@ router.post('/signin', function (req, res, next) {
                 var passDB = user.password;
                 bcrypt.compare(password, passDB, function (err, doesMatch) {
                     if (doesMatch) {
-                        res.render('notes/add');
+                        res.redirect('/notes');
                     } else {
                         errors.push({text: 'Contraseña incorrecta'});
-                        res.render('index', {errors: errors, username:username});
+                        res.render('index', {errors: errors, username: username});
                     }
                 });
             } else {
                 errors.push({text: 'El usuario no existe'});
-                res.render('index', {errors: errors, username:username});
+                res.render('index', {errors: errors, username: username});
             }
         })
     }
